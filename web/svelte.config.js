@@ -9,16 +9,16 @@ const config = {
 	preprocess: [
 		vitePreprocess(),
 		preprocess({
-			postcss: true
-		})
+			postcss: true,
+		}),
 	],
 
 	kit: {
 		adapter: adapter(),
 		alias: {
-			$lib: 'src/lib'
-		}
-	}
+			$lib: 'src/lib',
+		},
+	},
 };
 
 export default config;
