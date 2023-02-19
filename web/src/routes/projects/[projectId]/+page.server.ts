@@ -1,15 +1,16 @@
-import { serializedNonPOJO } from '$lib/utils';
+import { serializeNonPOJOs } from '$lib/utils';
 import { error } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ locals, params }) => {
 	const getProject = async (projectId: string) => {
 		try {
-			const project = serializedNonPOJO(await locals.pb.collection('projects').getOne(projectId));
-			return project;
+			return serializeNonPOJOs(await locals.pb.collection('projects').getOne(projectId));
 		} catch (err) {
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 	};
 

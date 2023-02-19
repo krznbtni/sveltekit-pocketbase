@@ -2,9 +2,12 @@
 	import '../app.postcss';
 	import { getImageURL } from '$lib/utils';
 	import type { LayoutData } from './$types';
+	import { Toaster } from 'svelte-french-toast';
 
 	export let data: LayoutData;
 </script>
+
+<Toaster />
 
 <div class="min-h-full">
 	<nav class="navbar bg-base-100 border-b">

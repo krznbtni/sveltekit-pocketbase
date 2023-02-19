@@ -1,5 +1,6 @@
-import { serializedNonPOJO } from '$lib/utils';
+import { serializeNonPOJOs } from '$lib/utils';
 import { error, redirect } from '@sveltejs/kit';
+import type { ClientResponseError } from 'pocketbase';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ locals }) => {
@@ -9,21 +10,20 @@ export const load = (async ({ locals }) => {
 
 	const getUsersProjects = async (userId: string) => {
 		try {
-			const projects = serializedNonPOJO(
+			return serializeNonPOJOs(
 				await locals.pb
 					.collection('projects')
 					.getFullList(undefined, { filter: `user = "${userId}"` }),
 			);
-
-			return projects;
 		} catch (err) {
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 	};
 
 	return {
-		projects: getUsersProjects(locals.user.id),
+		projects: getUsersProjects(locals.user?.id),
 	};
 }) satisfies PageServerLoad;
 
@@ -34,8 +34,9 @@ export const actions: Actions = {
 		try {
 			await locals.pb.collection('projects').delete(id);
 		} catch (err) {
-			console.log('Error: ', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 
 		return {

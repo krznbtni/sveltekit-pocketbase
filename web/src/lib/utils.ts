@@ -1,14 +1,13 @@
 const { randomBytes } = await import('node:crypto');
 
 import type { z, ZodError } from 'zod';
-import type { BaseAuthStore } from 'pocketbase';
 
-export function serializedNonPOJO(obj: BaseAuthStore['model']) {
+export const serializeNonPOJOs = <T>(obj: T): T => {
 	/// Native JS.
 	/// Creates a deep clone of an object.
 	/// It is equivalent to JSON.parse.
 	return structuredClone(obj);
-}
+};
 
 export function generateUsername(name: string) {
 	const id = randomBytes(2).toString('hex');

@@ -3,6 +3,7 @@ import { validateData } from '$lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 import { serialize } from 'object-to-formdata';
+import type { ClientResponseError } from 'pocketbase';
 
 export const load = (async ({ locals }) => {
 	if (!locals.pb.authStore.isValid) {
@@ -19,7 +20,7 @@ export const actions: Actions = {
 			body.delete('thumbnail');
 		}
 
-		body.append('user', locals.user.id);
+		body.append('user', locals.user?.id);
 
 		const { formData, errors } = await validateData(body, createProjectSchema);
 		const { thumbnail, ...rest } = formData;
@@ -34,8 +35,9 @@ export const actions: Actions = {
 		try {
 			await locals.pb.collection('projects').create(serialize(formData));
 		} catch (err) {
-			console.log('Error: ', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 
 		throw redirect(303, '/my/projects');
