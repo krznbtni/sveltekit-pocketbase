@@ -1,16 +1,10 @@
+import { error, fail, redirect } from '@sveltejs/kit';
 import { loginUserSchema } from '$lib/schemas';
 import { validateData } from '$lib/utils';
-import { error, fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
-
-type RequestData = {
-	email?: string;
-	password?: string;
-};
 
 export const actions: Actions = {
 	login: async ({ locals, request }) => {
-		// const body: RequestData = Object.fromEntries(await request.formData());
 		const { formData, errors } = await validateData(await request.formData(), loginUserSchema);
 
 		if (errors) {
