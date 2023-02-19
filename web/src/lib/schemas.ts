@@ -113,3 +113,37 @@ export const updateUsernameSchema = z.object({
 		.max(24, { message: 'Username must be 24 characters or less' })
 		.regex(/^[a-zA-Z0-9]*$/, { message: 'Username can only contain letters or numbers.' }),
 });
+
+export const updatePasswordSchema = z
+	.object({
+		oldPassword: z.string({ required_error: 'Old password is required' }),
+
+		password: z
+			.string({ required_error: 'Password is required' })
+			.regex(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/, {
+				message:
+					'Password must be a minimum of 8 characters & contain at least one letter, one number, and one special character.',
+			}),
+
+		passwordConfirm: z
+			.string({ required_error: 'Confirm password is required' })
+			.regex(/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*#?&])[a-zA-Z\d@$!%*#?&]{8,}$/, {
+				message:
+					'Password must be a minimum of 8 characters & contain at least one letter, one number, and one special character.',
+			}),
+	})
+	.superRefine(({ passwordConfirm, password }, ctx) => {
+		if (passwordConfirm !== password) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Password & Confirm Password must match',
+				path: ['password'],
+			});
+
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				message: 'Password & Confirm Password must match',
+				path: ['passwordConfirm'],
+			});
+		}
+	});
