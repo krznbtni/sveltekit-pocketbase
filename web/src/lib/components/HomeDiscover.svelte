@@ -6,6 +6,6 @@
 </script>
 
 <div class="w-full">
-	<h3 class="font-bold font-heading text-2xl mb-4">Trending Projects</h3>
+	<h3 class="font-bold font-heading text-2xl mb-4">Recent Projects</h3>
 	<ProjectsGrid {projects} />
 </div>

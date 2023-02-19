@@ -6,7 +6,5 @@
 </script>
 
 <div class="w-full mt-4 space-y-6">
-	<h1 class="text-xl font-bold">Recent Projects</h1>
-
 	<HomeDiscover projects={data.projects} />
 </div>
