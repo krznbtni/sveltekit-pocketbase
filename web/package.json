@@ -30,6 +30,7 @@
 		"eslint-config-prettier": "^8.5.0",
 		"eslint-plugin-svelte3": "^4.0.0",
 		"eslint-plugin-vitest": "^0.0.34",
+		"object-to-formdata": "^4.4.2",
 		"postcss": "^8.4.14",
 		"postcss-load-config": "^4.0.1",
 		"prettier": "^2.8.0",
