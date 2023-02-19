@@ -21,7 +21,9 @@
 		{required}
 		{type}
 		{value}
-		class="input input-bordered w-full-max-w-lg"
+		class={type === 'file'
+			? 'file-input file-input-bordered w-full max-w-lg'
+			: 'input input-bordered w-full-max-w-lg'}
 		name={id}
 	/>
 
