@@ -1,8 +1,14 @@
 import { updateEmailSchema, updateUsernameSchema } from '$lib/schemas';
 import { validateData } from '$lib/utils';
-import { error, fail } from '@sveltejs/kit';
-import type { Actions } from './$types';
+import { error, fail, redirect } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 import type { ClientResponseError } from 'pocketbase';
+
+export const load = (({ locals }) => {
+	if (!locals.pb.authStore.isValid) {
+		throw redirect(303, '/login');
+	}
+}) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	updateEmail: async ({ request, locals }) => {
