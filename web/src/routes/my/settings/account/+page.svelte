@@ -1,8 +1,7 @@
 <script lang="ts">
 	import { enhance, applyAction, type SubmitFunction } from '$app/forms';
 	import { invalidateAll } from '$app/navigation';
-	import type { ActionData } from './$types';
-	import type { PageData } from '../../../$types';
+	import type { ActionData, PageData } from './$types';
 
 	import { Input, Modal } from '$lib/components';
 
@@ -79,6 +78,7 @@
 					required={true}
 					value={form?.data?.email}
 					disabled={loading}
+					errors={form?.errors?.email}
 				/>
 
 				<button type="submit" class="btn btn-primary w-full" disabled={loading}
@@ -109,6 +109,7 @@
 					label="Enter your new username"
 					required={true}
 					value={form?.data?.username}
+					errors={form?.errors?.username}
 					disabled={loading}
 				/>
 

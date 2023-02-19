@@ -1,5 +1,6 @@
-import { error, redirect } from '@sveltejs/kit';
-import { generateUsername } from '$lib/utils';
+import { error, fail, redirect } from '@sveltejs/kit';
+import { generateUsername, validateData } from '$lib/utils';
+import { registerUserSchema } from '$lib/schemas';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (({ locals }) => {
@@ -14,27 +15,22 @@ export const load = (({ locals }) => {
 	};
 }) satisfies PageServerLoad;
 
-type RequestData = {
-	name?: string;
-	email?: string;
-	password?: string;
-	passwordConfirm?: string;
-};
-
 export const actions: Actions = {
 	register: async ({ locals, request }) => {
-		const body: RequestData = Object.fromEntries(await request.formData());
+		const { formData, errors } = await validateData(await request.formData(), registerUserSchema);
 
-		if (!body.name) {
-			return;
+		if (errors) {
+			return fail(400, {
+				data: formData,
+				errors: errors.fieldErrors,
+			});
 		}
 
-		const username = generateUsername(body.name?.split(' ').join('')).toLowerCase();
+		const username = generateUsername(formData.name?.split(' ').join('')).toLowerCase();
 
 		try {
-			await locals.pb.collection('users').create({ username, ...body });
-
-			// await locals.pb.collection('users').requestVerification(body.email);
+			await locals.pb.collection('users').create({ username, ...formData });
+			await locals.pb.collection('users').requestVerification(formData.email);
 		} catch (err) {
 			console.log('Error:', err);
 			throw error(500, 'Something went wrong');
