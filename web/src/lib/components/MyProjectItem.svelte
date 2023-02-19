@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { getImageURL } from '$lib/utils';
-	import { Modal } from '.';
+	import { Modal } from '$lib/components';
 	import { enhance } from '$app/forms';
+	import type { Project } from '$lib/types';
 
-	export let project;
+	export let project: Project;
 
 	let modalOpen: boolean;
 	$: modalOpen = false;

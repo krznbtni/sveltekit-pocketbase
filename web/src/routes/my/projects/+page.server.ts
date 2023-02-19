@@ -27,10 +27,6 @@ export const load = (async ({ locals }) => {
 	};
 }) satisfies PageServerLoad;
 
-type DeleteProject = {
-	id?: string;
-};
-
 export const actions: Actions = {
 	deleteProject: async ({ locals, request }) => {
 		const { id } = Object.fromEntries(await request.formData());

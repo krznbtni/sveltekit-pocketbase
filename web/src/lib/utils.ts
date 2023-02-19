@@ -1,7 +1,6 @@
 const { randomBytes } = await import('node:crypto');
 
 import type { z, ZodError } from 'zod';
-import { z as ZOD } from 'zod';
 import type { BaseAuthStore } from 'pocketbase';
 
 export function serializedNonPOJO(obj: BaseAuthStore['model']) {
@@ -17,7 +16,7 @@ export function generateUsername(name: string) {
 }
 
 export function getImageURL(
-	collectionId: number,
+	collectionId: string,
 	recordId: string,
 	fileName: string,
 	size = '0x0',

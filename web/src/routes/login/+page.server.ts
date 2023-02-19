@@ -1,7 +1,13 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import { loginUserSchema } from '$lib/schemas';
 import { validateData } from '$lib/utils';
-import type { Actions } from './$types';
+import type { Actions, PageServerLoad } from './$types';
+
+export const load = (({ locals }) => {
+	if (locals.pb.authStore.isValid) {
+		throw redirect(303, '/');
+	}
+}) satisfies PageServerLoad;
 
 export const actions: Actions = {
 	login: async ({ locals, request }) => {
