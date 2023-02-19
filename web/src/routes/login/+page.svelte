@@ -1,8 +1,36 @@
 <script lang="ts">
+	import { enhance, type SubmitFunction } from '$app/forms';
 	import { Input } from '$lib/components';
 	import type { ActionData } from './$types';
+	import { toast } from 'svelte-french-toast';
 
 	export let form: ActionData;
+
+	let loading = false;
+
+	const submitLogin = (() => {
+		loading = true;
+
+		return async ({ result, update }) => {
+			switch (result.type) {
+				case 'success':
+					await update();
+					break;
+				case 'failure':
+					toast.error('Invalid credentials');
+					await update();
+					break;
+				case 'error':
+					toast.error(result.error.message);
+					break;
+				default:
+					await update();
+					break;
+			}
+
+			loading = false;
+		};
+	}) satisfies SubmitFunction;
 </script>
 
 <div class="flex flex-col items-center h-full w-full">
@@ -14,15 +42,27 @@
 		> if you don't already have account.
 	</p>
 
-	<form action="?/login" method="POST" class="flex flex-col items-center space-y-2 w-full pt-4">
+	<form
+		action="?/login"
+		method="POST"
+		class="flex flex-col items-center space-y-2 w-full pt-4"
+		use:enhance={submitLogin}
+	>
 		<Input
 			type="email"
 			id="email"
 			label="Email"
 			value={form?.data?.email ?? ''}
 			errors={form?.errors?.email}
+			disabled={loading}
 		/>
-		<Input type="password" id="password" label="Password" errors={form?.errors?.password} />
+		<Input
+			type="password"
+			id="password"
+			label="Password"
+			errors={form?.errors?.password}
+			disabled={loading}
+		/>
 
 		<div class="w-full max-w-lg">
 			<a
@@ -32,7 +72,7 @@
 		</div>
 
 		<div class="w-full max-w-lg pt-2">
-			<button type="submit" class="btn btn-primary w-full">Login</button>
+			<button type="submit" class="btn btn-primary w-full" disabled={loading}>Login</button>
 		</div>
 
 		{#if form?.notVerified}

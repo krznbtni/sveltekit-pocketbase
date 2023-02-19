@@ -18,8 +18,8 @@
 	</div>
 
 	<h1 class="text-2xl font-bold mt-4">
-		{data.project.name}
+		{data?.project?.name}
 	</h1>
-	<p class="text-2xl font-light mt-4">{data.project.tagline}</p>
-	<p>{data.project.description}</p>
+	<p class="text-2xl font-light mt-4">{data?.project?.tagline}</p>
+	<p>{data?.project?.description}</p>
 </div>

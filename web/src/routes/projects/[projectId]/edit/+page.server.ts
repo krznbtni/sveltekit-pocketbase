@@ -1,7 +1,8 @@
 import { updateProjectSchema } from '$lib/schemas';
-import { serializedNonPOJO, validateData } from '$lib/utils';
+import { serializeNonPOJOs, validateData } from '$lib/utils';
 import { error, fail, redirect } from '@sveltejs/kit';
 import { serialize } from 'object-to-formdata';
+import type { ClientResponseError } from 'pocketbase';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load = (async ({ locals, params }) => {
@@ -10,7 +11,7 @@ export const load = (async ({ locals, params }) => {
 	}
 
 	try {
-		const project = serializedNonPOJO(
+		const project = serializeNonPOJOs(
 			await locals.pb.collection('projects').getOne(params.projectId),
 		);
 
@@ -20,8 +21,9 @@ export const load = (async ({ locals, params }) => {
 			throw error(403, 'Forbidden');
 		}
 	} catch (err) {
-		console.log('Error:', err);
-		throw error(err.status, err.message);
+		const e = err as ClientResponseError;
+		console.log('Error: ', e);
+		throw error(e.status, e.message);
 	}
 }) satisfies PageServerLoad;
 
@@ -48,8 +50,9 @@ export const actions: Actions = {
 		try {
 			await locals.pb.collection('projects').update(params.projectId, serialize(formData));
 		} catch (err) {
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 
 		throw redirect(303, '/my/projects');
@@ -59,8 +62,9 @@ export const actions: Actions = {
 		try {
 			await locals.pb.collection('projects').update(params.projectId, { thumbnail: null });
 		} catch (err) {
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			throw error(e.status, e.message);
 		}
 
 		return {

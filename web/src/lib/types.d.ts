@@ -1,6 +1,12 @@
 import type { Record } from 'pocketbase';
 
-export interface Project extends Record {
+interface User extends Record {
+	name: string;
+	avatar?: string;
+	username: string;
+}
+
+interface Project extends Record {
 	name: string;
 	tagline: string;
 	description?: string;

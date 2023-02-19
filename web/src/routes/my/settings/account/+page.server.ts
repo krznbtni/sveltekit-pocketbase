@@ -51,7 +51,9 @@ export const actions: Actions = {
 			// which means we can continue with updating the usename.
 			await locals.pb.collection('users').getFirstListItem(`username = "${formData.username}"`);
 		} catch (err) {
-			if (err.status === 404) {
+			const e = err as ClientResponseError;
+			console.log('Error: ', e);
+			if (e.status === 404) {
 				try {
 					if (locals.user) {
 						const { username } = await locals.pb
@@ -62,14 +64,14 @@ export const actions: Actions = {
 					}
 
 					return { success: true };
-				} catch (err2) {
-					console.log('Error:', err2);
-					throw error(err2.status, err2.message);
+				} catch (err) {
+					const e = err as ClientResponseError;
+					console.log('Error: ', e);
+					throw error(e.status, e.message);
 				}
 			}
 
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			throw error(e.status, e.message);
 		}
 	},
 };

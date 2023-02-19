@@ -2,7 +2,8 @@ import type { Handle } from '@sveltejs/kit';
 
 import PocketBase from 'pocketbase';
 
-import { serializedNonPOJO } from '$lib/utils';
+import { serializeNonPOJOs } from '$lib/utils';
+import type { User } from '$lib/types';
 
 /// Hooks are run on every request.
 export const handle = (async ({ event, resolve }) => {
@@ -21,7 +22,7 @@ export const handle = (async ({ event, resolve }) => {
 
 			// Serialize the user model, and save the value in the locals object.
 			// The locals object is unique for each user. This is how you distinguish users.
-			event.locals.user = serializedNonPOJO(event.locals.pb.authStore.model);
+			event.locals.user = serializeNonPOJOs<User>(event.locals.pb.authStore.model as User);
 		}
 	} catch (_) {
 		/// Clear the auth store on failed refresh.
