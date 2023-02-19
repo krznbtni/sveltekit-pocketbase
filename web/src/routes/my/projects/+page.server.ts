@@ -1,4 +1,4 @@
-import { serializeNonPOJOs } from '$lib/utils';
+import { getUsersProjects } from '$lib/services/ProjectService';
 import { error, redirect } from '@sveltejs/kit';
 import type { ClientResponseError } from 'pocketbase';
 import type { Actions, PageServerLoad } from './$types';
@@ -8,22 +8,8 @@ export const load = (async ({ locals }) => {
 		throw redirect(303, '/login');
 	}
 
-	const getUsersProjects = async (userId: string) => {
-		try {
-			return serializeNonPOJOs(
-				await locals.pb
-					.collection('projects')
-					.getFullList(undefined, { filter: `user = "${userId}"` }),
-			);
-		} catch (err) {
-			const e = err as ClientResponseError;
-			console.log('Error: ', e);
-			throw error(e.status, e.message);
-		}
-	};
-
 	return {
-		projects: getUsersProjects(locals.user?.id),
+		projects: getUsersProjects(locals),
 	};
 }) satisfies PageServerLoad;
 
