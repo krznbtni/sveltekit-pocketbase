@@ -38,7 +38,7 @@ export const actions: Actions = {
 				locals.user.avatar = avatar;
 			}
 		} catch (err) {
-			console.log(err);
+			console.log('Error: ', err);
 			throw error(400, 'Something went wrong updating your profile');
 		}
 

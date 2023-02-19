@@ -2,6 +2,7 @@ import { error, fail, redirect } from '@sveltejs/kit';
 import { updatePasswordSchema } from '$lib/schemas';
 import { validateData } from '$lib/utils';
 import type { Actions, PageServerLoad } from './$types';
+import type { ClientResponseError } from 'pocketbase';
 
 export const load = (({ locals }) => {
 	if (!locals.pb.authStore.isValid) {
@@ -26,8 +27,9 @@ export const actions: Actions = {
 				locals.pb.authStore.clear();
 			}
 		} catch (err) {
-			console.log('Error:', err);
-			throw error(err.status, err.message);
+			const e = err as ClientResponseError;
+			console.log('Error:', e);
+			throw error(e.status, e.message);
 		}
 
 		throw redirect(303, '/login');
