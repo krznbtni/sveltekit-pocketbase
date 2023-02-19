@@ -1,11 +1,33 @@
 <script lang="ts">
-	import { Input } from '$lib/components';
-	import type { PageData } from './$types';
-	import { Icon, Trash } from 'svelte-hero-icons';
+	import { enhance, type SubmitFunction } from '$app/forms';
 	import { getImageURL } from '$lib/utils';
-	import { enhance } from '$app/forms';
+	import { Icon, Trash } from 'svelte-hero-icons';
+	import { Input, TextArea } from '$lib/components';
+	import { invalidateAll } from '$app/navigation';
+	import type { ActionData, PageData } from './$types';
 
 	export let data: PageData;
+	export let form: ActionData;
+
+	let loading = false;
+
+	const submitUpdateProject = (() => {
+		loading = true;
+
+		return async ({ result, update }) => {
+			switch (result.type) {
+				case 'success':
+					await invalidateAll();
+					break;
+				case 'error':
+					break;
+				default:
+					await update();
+			}
+
+			loading = false;
+		};
+	}) satisfies SubmitFunction;
 </script>
 
 <div class="flex flex-col w-full h-full p-2">
@@ -15,30 +37,40 @@
 			method="POST"
 			enctype="multipart/form-data"
 			class="flex flex-col space-y-2 w-full item-center"
-			use:enhance
+			use:enhance={submitUpdateProject}
 		>
-			<h3 class="text-3xl font-bold">Edit {data.project.name}</h3>
-			<Input id="name" label="Project Name" value={data.project.name ?? ''} />
-			<Input id="name" label="Project tagline" value={data.project.tagline ?? ''} />
-			<Input id="name" label="Project URL" value={data.project.url ?? ''} />
+			<h3 class="text-3xl font-bold">Edit {data.project?.name}</h3>
+			<Input
+				id="name"
+				label="Project Name"
+				value={form?.data?.name ?? data.project?.name}
+				errors={form?.errors?.name}
+			/>
+			<Input
+				id="tagline"
+				label="Project tagline"
+				value={form?.data?.tagline ?? data.project?.tagline}
+				errors={form?.errors?.tagline}
+			/>
+			<Input
+				id="url"
+				label="Project URL"
+				value={form?.data?.url ?? data.project?.url}
+				errors={form?.errors?.url}
+			/>
+			<TextArea
+				id="description"
+				label="Project description"
+				value={form?.data?.description ?? data?.project?.description}
+				errors={form?.errors?.description}
+			/>
 
 			<div class="form-control w-full max-w-lg">
-				<label for="description" class="label font-medium pb-1">
-					<span class="label-text">Project description</span>
-				</label>
-				<textarea
-					name="description"
-					class="textarea textarea-bordered h-24 resize-none"
-					value={data.project.description ?? ''}
-				/>
-			</div>
-
-			<div class="form-control w-full max-w-lg">
-				<label for="thumgnail" class="label font-medium pb-1">
+				<label for="thumbnail" class="label font-medium pb-1">
 					<span class="label-text">Thumbnail</span>
 				</label>
 
-				{#if data.project.thumbnail}
+				{#if data.project?.thumbnail}
 					<label for="thumbnail" class="avatar w-20 hover:cursor">
 						<label for="thumbnail" class="absolute -top-1.5 -right-1.5 hover:cursor-pointer">
 							<button formaction="?/deleteThumbnail" class="btn btn-error btn-sm btn-circle">
@@ -66,6 +98,14 @@
 					id="thumbnail"
 					class="file-input file-input-bordered w-full max-w-lg mt-2"
 				/>
+
+				{#if form?.errors?.thumbnail}
+					{#each form?.errors?.thumbnail as error}
+						<label for="thumbnail" class="label py-0 pt-1">
+							<span class="label-text-alt text-error">{error}</span>
+						</label>
+					{/each}
+				{/if}
 			</div>
 
 			<div class="w-full max-w-lg pt-3">
