@@ -1,10 +1,10 @@
 <script lang="ts">
 	import '../app.postcss';
 	import { getImageURL } from '$lib/utils';
-	import type { LayoutData } from './$types';
 	import { Toaster } from 'svelte-french-toast';
+	import type { PageData } from './$types';
 
-	export let data: LayoutData;
+	export let data: PageData;
 </script>
 
 <Toaster />
