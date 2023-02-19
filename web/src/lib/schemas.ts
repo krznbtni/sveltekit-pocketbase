@@ -97,3 +97,5 @@ export const createProjectSchema = z.object({
 		}),
 	user: z.string({ required_error: 'User is required' }),
 });
+
+export const updateProjectSchema = createProjectSchema.omit({ user: true });
