@@ -33,7 +33,7 @@
 	}) satisfies SubmitFunction;
 </script>
 
-<div class="w-full h-28 flex items-center justify-between">
+<div class="bg-base-100 w-full h-28 p-4 flex items-center justify-between">
 	<div class="avatar">
 		<div class="w-20 rounded">
 			<img
